@@ -4,6 +4,13 @@ import application.models.User;
 import application.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,10 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class SignInController {
 
     private final UserRepo userRepository;
+    
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SignInController(UserRepo userRepo){
+    public SignInController(UserRepo userRepo, PasswordEncoder passEncode){
         userRepository = userRepo;
+        passwordEncoder = passEncode;
     }
 
     @PostMapping("/signin")
@@ -23,9 +33,13 @@ public class SignInController {
         User user = null;
         try{
             user = loadUserByUsername(username);
-        }catch(Exception e){
+        }catch(UsernameNotFoundException e){
             return ResponseEntity.badRequest().body("Invalid username or password");
         }
+        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+            return ResponseEntity.badRequest().body("Invalid username or password");
+        }
+
         return ResponseEntity.ok("Login successful!");
     }
 
@@ -33,7 +47,7 @@ public class SignInController {
         User user = userRepository.getUserByUsername(username);
         
         if (user == null) {
-            throw new RuntimeException();
+            throw new UsernameNotFoundException("User not found with username: " + username);
         }
         return user;
     }
