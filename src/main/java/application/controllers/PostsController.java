@@ -24,11 +24,7 @@ import org.springframework.web.client.RestTemplate;
 @CrossOrigin
 public class PostsController {
     private final String BASE_URL = "https://jsonplaceholder.typicode.com/posts";
-    private final RestTemplate restTemplate;
-
-    public PostsController() {
-        this.restTemplate = new RestTemplate();
-    }
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @GetMapping("")
     public ResponseEntity<String> getAllPosts() {

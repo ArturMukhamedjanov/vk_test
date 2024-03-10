@@ -21,11 +21,7 @@ import org.springframework.web.client.RestTemplate;
 @PreAuthorize("hasAuthority('ROLE_USERS') OR hasAuthority('ROLE_ADMIN')")
 public class UsersController {
     private final String BASE_URL = "https://jsonplaceholder.typicode.com/users";
-    private final RestTemplate restTemplate;
-
-    public UsersController() {
-        this.restTemplate = new RestTemplate();
-    }
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @GetMapping("")
     public ResponseEntity<String> getAllUsers() {

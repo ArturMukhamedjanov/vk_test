@@ -22,11 +22,7 @@ import org.springframework.web.client.RestTemplate;
 @PreAuthorize("hasAuthority('ROLE_ALBUMS') OR hasAuthority('ROLE_ADMIN')")
 public class AlbumsController {
     private final String BASE_URL = "https://jsonplaceholder.typicode.com/albums";
-    private final RestTemplate restTemplate;
-
-    public AlbumsController() {
-        this.restTemplate = new RestTemplate();
-    }
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @GetMapping("")
     public ResponseEntity<String> getAllAlbums() {

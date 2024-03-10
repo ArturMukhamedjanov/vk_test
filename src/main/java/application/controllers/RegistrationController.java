@@ -6,7 +6,6 @@ import application.repos.RoleRepo;
 import application.repos.UserRepo;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,11 +46,9 @@ public class RegistrationController {
         if (userRepository.existsByUsername(username)) {
             return "Username already exists!";
         }
-
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
-
         Role role = roleRepository.getRoleByName(roleName);
         System.out.println(role.getName());
         Set<Role> roles = new HashSet<>();

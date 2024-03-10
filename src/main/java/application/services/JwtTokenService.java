@@ -77,8 +77,6 @@ public class JwtTokenService {
             return false;
         } catch (MalformedJwtException mjEx) {
             return false;
-        } catch (SignatureException sEx) {
-            return false;
         } catch (Exception e) {
             return false;
         }

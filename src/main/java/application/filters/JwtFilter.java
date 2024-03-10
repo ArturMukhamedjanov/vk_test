@@ -1,9 +1,6 @@
 package application.filters;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Set;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -15,17 +12,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import application.models.JwtAuthentication;
-import application.models.Role;
-import application.repos.UserRepo;
 import application.services.JwtTokenService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import application.services.JwtUtils;
 
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends GenericFilterBean {
