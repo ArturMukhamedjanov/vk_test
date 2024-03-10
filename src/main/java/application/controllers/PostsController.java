@@ -52,7 +52,6 @@ public class PostsController {
 
    
     @PostMapping
-    @PreAuthorize("hasAuthority('POST_EDITOR') OR hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> createPost(@RequestBody(required = false) String post) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

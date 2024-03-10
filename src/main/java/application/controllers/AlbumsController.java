@@ -51,7 +51,6 @@ public class AlbumsController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ALBUMS_EDITOR') OR hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> createAlbum(@RequestBody(required = false) String post) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
