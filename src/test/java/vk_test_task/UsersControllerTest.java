@@ -28,7 +28,6 @@ public class UsersControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-
     @Test
     @WithMockUser(authorities = "ROLE_USERS")
     public void testGetAllUsers() throws Exception {
