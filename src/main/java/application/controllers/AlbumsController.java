@@ -51,6 +51,7 @@ public class AlbumsController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ALBUMS_EDITOR') OR hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> createAlbum(@RequestBody(required = false) String post) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -61,6 +62,7 @@ public class AlbumsController {
     }
 
     @PutMapping("/{postId}")
+    @PreAuthorize("hasAuthority('ALBUMS_EDITOR') OR hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> updateAlbum(@PathVariable Long postId, @RequestBody(required = false) String post) {
         String url = BASE_URL + "/" + postId;
         HttpHeaders headers = new HttpHeaders();
@@ -72,6 +74,7 @@ public class AlbumsController {
     }
 
     @DeleteMapping("/{postId}")
+    @PreAuthorize("hasAuthority('ALBUMS_EDITOR') OR hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteAlbum(@PathVariable Long postId) {
         String url = BASE_URL + "/" + postId;
         restTemplate.delete(url);

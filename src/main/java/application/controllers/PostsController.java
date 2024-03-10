@@ -6,7 +6,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,7 +50,9 @@ public class PostsController {
         }
     }
 
+   
     @PostMapping
+    @PreAuthorize("hasAuthority('POST_EDITOR') OR hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> createPost(@RequestBody(required = false) String post) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -62,6 +63,7 @@ public class PostsController {
     }
 
     @PutMapping("/{postId}")
+    @PreAuthorize("hasAuthority('POST_EDITOR') OR hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> updatePost(@PathVariable Long postId, @RequestBody(required = false) String post) {
         String url = BASE_URL + "/" + postId;
         HttpHeaders headers = new HttpHeaders();
@@ -73,6 +75,7 @@ public class PostsController {
     }
 
     @DeleteMapping("/{postId}")
+    @PreAuthorize("hasAuthority('POST_EDITOR') OR hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
         String url = BASE_URL + "/" + postId;
         restTemplate.delete(url);
