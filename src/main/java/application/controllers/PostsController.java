@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-
 @RestController
 @RequestMapping("/api/posts")
 @PreAuthorize("hasAuthority('ROLE_POSTS') OR hasAuthority('ROLE_ADMIN')")
@@ -60,6 +59,5 @@ public class PostsController {
         restTemplate.delete(url);
         return ResponseEntity.noContent().build();
     }
-
 
 }

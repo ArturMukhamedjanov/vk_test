@@ -1,7 +1,9 @@
 package application.controllers;
 
+import application.models.AuditLog;
 import application.models.Role;
 import application.models.User;
+import application.repos.AuditLogRepo;
 import application.repos.RoleRepo;
 import application.repos.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class RegistrationController {
     private final UserRepo userRepository;
     private final RoleRepo roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuditLogRepo auditLogRepo;
 
     @PostMapping("/register/admin")
     public String registerAdmin(@RequestParam String username, @RequestParam String password) {
@@ -56,7 +59,8 @@ public class RegistrationController {
         user.setRoles(roles);
 
         userRepository.save(user);
-
+        AuditLog auditLog = new AuditLog("Added new user", username);
+        auditLogRepo.save(auditLog);
         return "User registered successfully!";
     }
 }

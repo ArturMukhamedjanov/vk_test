@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
 import application.services.JwtUtils;
 
-
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends GenericFilterBean {

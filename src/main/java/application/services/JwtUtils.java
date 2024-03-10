@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public final class JwtUtils {
-    
-    private final UserRepo userRepo; 
+
+    private final UserRepo userRepo;
 
     public JwtAuthentication generate(Claims claims) {
         final JwtAuthentication jwtInfoToken = new JwtAuthentication();

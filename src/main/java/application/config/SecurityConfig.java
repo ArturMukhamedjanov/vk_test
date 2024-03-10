@@ -34,8 +34,8 @@ public class SecurityConfig {
                                 .antMatchers("/signin", "/register/**").permitAll()
                                 .anyRequest().authenticated()
                                 .and()
-                                .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                ).build();
+                                .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class))
+                .build();
     }
 
     @Bean

@@ -29,7 +29,7 @@ public class AuthService {
 
     public JwtResponse login(@NonNull JwtRequest authRequest) throws AuthException {
         final User user = userRepo.getUserByUsername(authRequest.getUsername());
-        if(user == null){
+        if (user == null) {
             new AuthException("Пользователь не найден");
         }
         if (passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
@@ -49,9 +49,9 @@ public class AuthService {
             final String saveRefreshToken = refreshStorage.get(username);
             if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
                 final User user = userRepo.getUserByUsername(username);
-                if(user == null){
+                if (user == null) {
                     new AuthException("Пользователь не найден");
-                }   
+                }
                 final String accessToken = jwtProvider.generateAccessToken(user);
                 return new JwtResponse(accessToken, null);
             }
@@ -66,9 +66,9 @@ public class AuthService {
             final String saveRefreshToken = refreshStorage.get(username);
             if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
                 final User user = userRepo.getUserByUsername(username);
-                if(user == null){
+                if (user == null) {
                     new AuthException("Пользователь не найден");
-                }   
+                }
                 final String accessToken = jwtProvider.generateAccessToken(user);
                 final String newRefreshToken = jwtProvider.generateRefreshToken(user);
                 refreshStorage.put(user.getUsername(), newRefreshToken);
