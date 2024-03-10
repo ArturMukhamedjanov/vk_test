@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/api/albums")
+@PreAuthorize("hasAuthority('ROLE_ALBUMS') OR hasAuthority('ROLE_ADMIN')")
 public class AlbumsController {
     private final String BASE_URL = "https://jsonplaceholder.typicode.com/albums";
     private final RestTemplate restTemplate;

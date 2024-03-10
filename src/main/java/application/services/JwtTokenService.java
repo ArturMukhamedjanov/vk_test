@@ -1,65 +1,102 @@
 package application.services;
 
-import org.hibernate.mapping.List;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import application.models.User;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 
+import java.security.Key;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+
+import javax.crypto.SecretKey;
 
 @Service
 public class JwtTokenService {
 
-    @Value("${jwt.secret}")
-    private String secretKey;
+    private final SecretKey jwtAccessSecret;
+    private final SecretKey jwtRefreshSecret;
 
-    @Value("${jwt.expiration}")
-    private long expirationTime;
+    public JwtTokenService(
+            @Value("${jwt.secret.access}") String jwtAccessSecret,
+            @Value("${jwt.secret.refresh}") String jwtRefreshSecret
+    ) {
+        this.jwtAccessSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret));
+        this.jwtRefreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtRefreshSecret));
+    }
 
-    public String generateToken(User user) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("username", user.getUsername());
-        claims.put("roles", user.getRoles());
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + expirationTime);
 
+
+    public String generateAccessToken(@NonNull User user) {
+        final LocalDateTime now = LocalDateTime.now();
+        final Instant accessExpirationInstant = now.plusMinutes(10).atZone(ZoneId.systemDefault()).toInstant();
+        final Date accessExpiration = Date.from(accessExpirationInstant);
         return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .setSubject(user.getUsername())
+                .setExpiration(accessExpiration)
+                .signWith(jwtAccessSecret)
+                .claim("roles", user.getRoles())
                 .compact();
     }
 
-    public Set<String> getRoles(String token){
-        Set<String> roles = new HashSet<>();
-        if(validateToken(token)){
-            try {
-                Claims claims = Jwts.parser()
-                                   .setSigningKey(secretKey)
-                                   .parseClaimsJws(token)
-                                   .getBody();
-                roles = new HashSet<>(claims.get("roles", Set.class));
-            } catch (Exception e) {
-                // Handle any potential exceptions here
-                e.printStackTrace();
-            }
-        }
-        return roles;
+    public String generateRefreshToken(@NonNull User user) {
+        final LocalDateTime now = LocalDateTime.now();
+        final Instant refreshExpirationInstant = now.plusDays(30).atZone(ZoneId.systemDefault()).toInstant();
+        final Date refreshExpiration = Date.from(refreshExpirationInstant);
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .setExpiration(refreshExpiration)
+                .signWith(jwtRefreshSecret)
+                .compact();
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateAccessToken(@NonNull String accessToken) {
+        return validateToken(accessToken, jwtAccessSecret);
+    }
+
+    public boolean validateRefreshToken(@NonNull String refreshToken) {
+        return validateToken(refreshToken, jwtRefreshSecret);
+    }
+
+    private boolean validateToken(@NonNull String token, @NonNull Key secret) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jwts.parserBuilder()
+                    .setSigningKey(secret)
+                    .build()
+                    .parseClaimsJws(token);
             return true;
-        } catch (Exception e){
+        } catch (ExpiredJwtException expEx) {
+            return false;
+        } catch (UnsupportedJwtException unsEx) {
+            return false;
+        } catch (MalformedJwtException mjEx) {
+            return false;
+        } catch (SignatureException sEx) {
+            return false;
+        } catch (Exception e) {
             return false;
         }
+    }
+
+    public Claims getAccessClaims(@NonNull String token) {
+        return getClaims(token, jwtAccessSecret);
+    }
+
+    public Claims getRefreshClaims(@NonNull String token) {
+        return getClaims(token, jwtRefreshSecret);
+    }
+
+    private Claims getClaims(@NonNull String token, @NonNull Key secret) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secret)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

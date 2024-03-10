@@ -4,6 +4,8 @@ import application.models.Role;
 import application.models.User;
 import application.repos.RoleRepo;
 import application.repos.UserRepo;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,18 +16,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 @RestController
+@RequiredArgsConstructor
 public class RegistrationController {
 
     private final UserRepo userRepository;
     private final RoleRepo roleRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public RegistrationController(UserRepo userRepository, RoleRepo roleRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @PostMapping("/register/admin")
     public String registerAdmin(@RequestParam String username, @RequestParam String password) {
@@ -34,7 +30,7 @@ public class RegistrationController {
 
     @PostMapping("/register/user")
     public String registerUser(@RequestParam String username, @RequestParam String password) {
-        return registerUser(username, password, "ROLE_USER");
+        return registerUser(username, password, "ROLE_USERS");
     }
 
     @PostMapping("/register/albums")
@@ -57,7 +53,7 @@ public class RegistrationController {
         user.setPassword(passwordEncoder.encode(password));
 
         Role role = roleRepository.getRoleByName(roleName);
-
+        System.out.println(role.getName());
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         user.setRoles(roles);
